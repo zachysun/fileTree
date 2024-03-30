@@ -12,7 +12,7 @@ A simple Python script:
 **Generate file structure:**
 
 ```cmd
-python train.py
+python tree.py
 ```
 
 **Generate file structure and code pdf file:**
@@ -25,5 +25,6 @@ python tree.py --if-merge --merge-type pdf
 
 ```
 python tree.py --help
+---
+usage: tree.py [-h] [--directory DIRECTORY] [--if-merge] [--merge-type {txt,pdf}] [--n N] [--ignore [IGNORE ...]] [--specific-ext [SPECIFIC_EXT ...]] [--nonspecific-ext [NONSPECIFIC_EXT ...]] [--max-depth MAX_DEPTH]
 ```
-
