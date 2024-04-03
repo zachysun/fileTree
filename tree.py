@@ -1,6 +1,9 @@
 import os
 import argparse
-from fpdf import FPDF
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 CODE_EXTENSIONS = ['.py', '.cpp', '.c', '.java', '.js',
                    '.ts', '.html', '.css', '.sql', '.sh',
@@ -65,7 +68,6 @@ def generate_file_tree(directory, depth=0, max_depth=None, n=None, ignore=None,
                     lines.extend(child_items)
         else:
             lines.append("│   " * depth + "├── " + item)
-
         if not is_root and n and len(lines) > n:
             return lines[:3] + ["│   " * depth + "├── ..."]
 
@@ -75,7 +77,6 @@ def generate_file_tree(directory, depth=0, max_depth=None, n=None, ignore=None,
 def get_code_files(directory, extensions=CODE_EXTENSIONS, max_depth=None, depth=0, ignore=None):
     ignore = ignore if ignore else []
     code_files = []
-
     for item in os.listdir(directory):
         if item in ignore:
             continue
@@ -98,16 +99,18 @@ def merge_code_files(file_paths, output_type='txt', output_path='code_merge'):
                     outfile.write(infile.read())
                     outfile.write('\n\n')
     elif output_type == 'pdf':
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font('Arial', size=10)
+        doc = SimpleDocTemplate(f"{output_path}.pdf", pagesize=letter)
+        styles = getSampleStyleSheet()
+        code_style = ParagraphStyle('Code', parent=styles['Normal'], fontName="Courier", fontSize=8)
+        file_name_style = ParagraphStyle('FileName', parent=styles['Normal'], fontName="Courier", fontSize=12,
+                                         textColor=colors.blue)
+        content = []
         for file_path in file_paths:
             with open(file_path, 'r', encoding='utf-8') as infile:
-                pdf.write(5, f'File: {file_path}\n\n')
-                for line in infile:
-                    pdf.write(5, line)
-                pdf.write(5, '\n\n')
-        pdf.output(f'{output_path}.pdf')
+                content.append(Paragraph(f'File: {file_path}', file_name_style))
+                content.append(Paragraph(infile.read().replace('\n', '<br />'), code_style))
+                content.append(PageBreak())
+        doc.build(content)
 
 
 def main():
