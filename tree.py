@@ -7,18 +7,18 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 CODE_EXTENSIONS = ['.py', '.cpp', '.c', '.java', '.js',
                    '.ts', '.html', '.css', '.sql', '.sh',
-                   '.cu', '.rs', '.vue']
+                   '.cu', '.rs', '.vue', '.md']
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description='A simple Python script:'
                                                  '(1)Customizes to output the structure of project files. '
                                                  '(2)Concatenates the code in the project files into one PDF document.')
-    parser.add_argument('--directory', default='.',
+    parser.add_argument('--d', default='.',
                         help='Directory to start the tree from. Defaults to the current directory.')
-    parser.add_argument('--if-merge', action='store_true',
+    parser.add_argument('--merge', action='store_true',
                         help='Whether to merge code files into a single document.')
-    parser.add_argument('--merge-type', default='txt', choices=['txt', 'pdf'],
+    parser.add_argument('--output-type', default='txt', choices=['txt', 'pdf'],
                         help='The type of document to merge code files into. Choices are txt or pdf. Default is txt.')
     parser.add_argument('--n', type=int, default=10,
                         help='Limit on the number of items to display from each directory. '
